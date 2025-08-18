@@ -4,11 +4,13 @@ import PropertyForm from './components/PropertyForm';
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen font-sans p-4 sm:p-6 lg:p-8">
       <div className="container mx-auto max-w-4xl">
         <header className="text-center mb-10">
-          <h1 className="text-4xl sm:text-5xl font-bold text-blue-800">Quality Home Avalia</h1>
-          <p className="text-lg text-gray-600 mt-2">Formulário de Coleta de Dados do Imóvel</p>
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-100">
+            Quality Home <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Avalia</span>
+          </h1>
+          <p className="text-lg text-gray-400 mt-2">Formulário de Coleta de Dados do Imóvel</p>
         </header>
 
         <main>

@@ -35,6 +35,17 @@ export const DOCUMENT_OPTIONS = [
   { id: 'planta', value: 'Planta do Imóvel', label: 'Planta do Imóvel' },
 ];
 
+export const DOCUMENT_STATUS_OPTIONS = [
+  { value: 'Regularizada', label: 'Regularizada' },
+  { value: 'Pendente de averbação', label: 'Pendente de averbação' },
+  { value: 'Em processo de usucapião', label: 'Em processo de usucapião' },
+  { value: 'Escritura pública pendente de registro', label: 'Escritura pública pendente de registro' },
+  { value: 'Contrato de gaveta', label: 'Contrato de gaveta' },
+  { value: 'Em inventário', label: 'Em inventário' },
+  { value: 'Financiamento ativo', label: 'Financiamento ativo' },
+  { value: 'Outro / Não sei informar', label: 'Outro / Não sei informar' },
+];
+
 export const BRAZILIAN_STATES = [
   { value: 'AC', label: 'Acre' },
   { value: 'AL', label: 'Alagoas' },

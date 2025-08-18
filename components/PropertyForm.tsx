@@ -8,11 +8,12 @@ import TextareaField from './TextareaField';
 import CheckboxGroup from './CheckboxGroup';
 import RadioGroup from './RadioGroup';
 import PhotoURLManager from './PhotoURLManager';
-import { REQUESTER_ROLE_OPTIONS, PROPERTY_TYPE_OPTIONS, OBJECTIVE_OPTIONS, OCCUPANCY_OPTIONS, DOCUMENT_OPTIONS, BRAZILIAN_STATES } from '../constants';
+import { REQUESTER_ROLE_OPTIONS, PROPERTY_TYPE_OPTIONS, OBJECTIVE_OPTIONS, OCCUPANCY_OPTIONS, DOCUMENT_OPTIONS, BRAZILIAN_STATES, DOCUMENT_STATUS_OPTIONS } from '../constants';
 
 const PropertyForm: React.FC = () => {
   const { formData, updateField, updateAddressField, resetForm } = usePropertyForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCepLoading, setIsCepLoading] = useState(false);
 
   const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
@@ -22,6 +23,51 @@ const PropertyForm: React.FC = () => {
     value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
     value = value.replace(/(\d{5})(\d)/, '$1-$2');
     updateField('whatsapp', value);
+  };
+
+  const handleCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 8) {
+      value = value.substring(0, 8);
+    }
+    if (value.length > 5) {
+      value = value.replace(/^(\d{5})(\d)/, '$1-$2');
+    }
+    updateAddressField('zip', value);
+  };
+
+  const handleCepBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    const cep = e.target.value.replace(/\D/g, '');
+
+    if (cep.length !== 8) {
+      return;
+    }
+
+    setIsCepLoading(true);
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      if (!response.ok) {
+        throw new Error('Erro ao buscar o CEP. Verifique a conexão.');
+      }
+      const data = await response.json();
+
+      if (data.erro) {
+        alert('CEP não encontrado. Por favor, verifique o número digitado.');
+        return;
+      }
+
+      updateAddressField('street', data.logradouro);
+      updateAddressField('neighborhood', data.bairro);
+      updateAddressField('city', data.localidade);
+      updateAddressField('state', data.uf);
+
+      document.getElementById('number')?.focus();
+    } catch (error) {
+      console.error('CEP lookup error:', error);
+      alert(error instanceof Error ? error.message : 'Ocorreu um erro ao buscar o CEP.');
+    } finally {
+      setIsCepLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,8 +107,14 @@ const PropertyForm: React.FC = () => {
     }
   };
 
+  const isCondoNA = formData.condominium === 'N/A';
+
+  const handleCondominiumCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateField('condominium', e.target.checked ? 'N/A' : '');
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 sm:p-8 rounded-xl shadow-lg space-y-8">
+    <form onSubmit={handleSubmit} className="bg-[#162135] border border-slate-700 p-6 sm:p-8 rounded-xl shadow-lg space-y-8">
       <FormSection title="Informações do Cliente e Solicitante" icon="fa-user">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <InputField id="client_name" label="Nome do Cliente" value={formData.client_name} onChange={(e) => updateField('client_name', e.target.value)} required />
@@ -87,12 +139,26 @@ const PropertyForm: React.FC = () => {
 
       <FormSection title="Endereço do Imóvel" icon="fa-map-marker-alt">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <InputField id="street" label="Logradouro" value={formData.address.street} onChange={(e) => updateAddressField('street', e.target.value)} required />
+          <div className="md:col-span-2">
+            <InputField
+              id="zip"
+              label="CEP"
+              value={formData.address.zip}
+              onChange={handleCepChange}
+              onBlur={handleCepBlur}
+              maxLength={9}
+              placeholder="00000-000"
+              isLoading={isCepLoading}
+              required
+            />
+          </div>
+          <div className="md:col-span-2">
+            <InputField id="street" label="Logradouro" value={formData.address.street} onChange={(e) => updateAddressField('street', e.target.value)} required />
+          </div>
           <InputField id="number" label="Número" value={formData.address.number} onChange={(e) => updateAddressField('number', e.target.value)} required />
           <InputField id="neighborhood" label="Bairro" value={formData.address.neighborhood} onChange={(e) => updateAddressField('neighborhood', e.target.value)} required />
           <InputField id="city" label="Cidade" value={formData.address.city} onChange={(e) => updateAddressField('city', e.target.value)} required />
           <SelectField id="state" label="UF" value={formData.address.state} onChange={(e) => updateAddressField('state', e.target.value)} options={BRAZILIAN_STATES} required />
-          <InputField id="zip" label="CEP" value={formData.address.zip} onChange={(e) => updateAddressField('zip', e.target.value)} required />
         </div>
       </FormSection>
 
@@ -113,7 +179,14 @@ const PropertyForm: React.FC = () => {
           selectedValues={formData.documents}
           onChange={(newSelection) => updateField('documents', newSelection)}
         />
-        <InputField id="document_status" label="Situação da Documentação" value={formData.document_status} onChange={(e) => updateField('document_status', e.target.value)} placeholder="Ex: Regularizada, pendente de averbação, etc." required />
+        <SelectField
+          id="document_status"
+          label="Situação da Documentação"
+          value={formData.document_status}
+          onChange={(e) => updateField('document_status', e.target.value)}
+          options={DOCUMENT_STATUS_OPTIONS}
+          required
+        />
         <SelectField id="objective" label="Objetivo da Avaliação" value={formData.objective} onChange={(e) => updateField('objective', e.target.value)} options={OBJECTIVE_OPTIONS} />
       </FormSection>
 
@@ -125,7 +198,29 @@ const PropertyForm: React.FC = () => {
           selectedValue={formData.occupancy}
           onChange={(value) => updateField('occupancy', value)}
         />
-        <InputField id="condominium" label='Condomínio (Nome ou "N/A")' value={formData.condominium} onChange={(e) => updateField('condominium', e.target.value)} required />
+        <div>
+          <InputField
+            id="condominium"
+            label="Nome do Condomínio"
+            value={isCondoNA ? '' : formData.condominium}
+            onChange={(e) => updateField('condominium', e.target.value)}
+            required={!isCondoNA}
+            disabled={isCondoNA}
+            placeholder={isCondoNA ? 'Não aplicável' : 'Digite o nome...'}
+          />
+          <div className="flex items-center mt-2">
+            <input
+              id="condominium-na"
+              type="checkbox"
+              checked={isCondoNA}
+              onChange={handleCondominiumCheckboxChange}
+              className="h-4 w-4 text-cyan-500 bg-slate-700 border-slate-600 rounded focus:ring-cyan-500"
+            />
+            <label htmlFor="condominium-na" className="ml-2 block text-sm text-gray-300">
+              Não se aplica / Imóvel não está em condomínio
+            </label>
+          </div>
+        </div>
         <TextareaField id="additional_details" label="Outros Detalhes Relevantes" value={formData.additional_details} onChange={(e) => updateField('additional_details', e.target.value)} />
       </FormSection>
 
@@ -133,11 +228,11 @@ const PropertyForm: React.FC = () => {
         <PhotoURLManager />
       </FormSection>
 
-      <div className="pt-6 border-t border-gray-200">
+      <div className="pt-6 border-t border-slate-700">
         <button 
           type="submit" 
           disabled={isSubmitting}
-          className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out flex items-center justify-center disabled:bg-blue-400 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-4 focus:ring-cyan-300 transition duration-300 ease-in-out flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <i className={`fas ${isSubmitting ? 'fa-spinner fa-spin' : 'fa-paper-plane'} mr-2`}></i>
           {isSubmitting ? 'Enviando...' : 'Enviar Dados'}

@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface CheckboxGroupProps {
@@ -18,7 +17,7 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ label, options, selectedV
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+      <label className="block text-sm font-medium text-gray-300 mb-2">{label}</label>
       <div className="space-y-2">
         {options.map((option) => (
           <div key={option.id} className="flex items-center">
@@ -28,9 +27,9 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ label, options, selectedV
               value={option.value}
               checked={selectedValues.includes(option.value)}
               onChange={() => handleChange(option.value)}
-              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              className="h-4 w-4 text-cyan-500 bg-slate-700 border-slate-600 rounded focus:ring-cyan-500"
             />
-            <label htmlFor={option.id} className="ml-2 block text-sm text-gray-900">
+            <label htmlFor={option.id} className="ml-2 block text-sm text-gray-300">
               {option.label}
             </label>
           </div>
