@@ -21,7 +21,7 @@ const initialFormData: PropertyData = {
   documents: [],
   document_status: '',
   objective: Objective.VENDA,
-  photos: [''],
+  photos: [],
   occupancy: Occupancy.DESOCUPADO,
   condominium: '',
   additional_details: '',

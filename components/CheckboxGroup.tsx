@@ -5,9 +5,10 @@ interface CheckboxGroupProps {
   options: { id: string; value: string; label: string }[];
   selectedValues: string[];
   onChange: (selected: string[]) => void;
+  required?: boolean;
 }
 
-const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ label, options, selectedValues, onChange }) => {
+const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ label, options, selectedValues, onChange, required = false }) => {
   const handleChange = (value: string) => {
     const newSelection = selectedValues.includes(value)
       ? selectedValues.filter((v) => v !== value)
@@ -17,7 +18,10 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ label, options, selectedV
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-300 mb-2">{label}</label>
+      <label className="block text-sm font-medium text-gray-300 mb-2">
+        {label}
+        {required && <span className="text-red-500 ml-1">*</span>}
+      </label>
       <div className="space-y-2">
         {options.map((option) => (
           <div key={option.id} className="flex items-center">

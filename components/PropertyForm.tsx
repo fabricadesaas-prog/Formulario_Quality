@@ -72,6 +72,19 @@ const PropertyForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (formData.documents.length === 0) {
+      alert('O campo "Documentos Apresentados" é obrigatório. Por favor, selecione ao menos uma opção.');
+      document.getElementById('matricula')?.focus();
+      return;
+    }
+
+    if (formData.photos.length === 0) {
+        alert('O campo "Fotos do Imóvel" é obrigatório. Por favor, adicione ao menos uma foto.');
+        document.getElementById('photo-dropzone')?.focus();
+        return;
+    }
+
     setIsSubmitting(true);
     
     const webhookUrl = 'https://n8n.felipeteti.com/webhook/formulario';
@@ -126,6 +139,7 @@ const PropertyForm: React.FC = () => {
             placeholder="(XX) XXXXX-XXXX"
             type="tel"
             maxLength={15}
+            required
           />
         </div>
         <RadioGroup
@@ -163,11 +177,11 @@ const PropertyForm: React.FC = () => {
       </FormSection>
 
       <FormSection title="Características do Imóvel" icon="fa-home">
-        <SelectField id="property_type" label="Tipo de Imóvel" value={formData.property_type} onChange={(e) => updateField('property_type', e.target.value)} options={PROPERTY_TYPE_OPTIONS} />
+        <SelectField id="property_type" label="Tipo de Imóvel" value={formData.property_type} onChange={(e) => updateField('property_type', e.target.value)} options={PROPERTY_TYPE_OPTIONS} required/>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <InputField id="land_area_m2" label="Área do Terreno (m²)" type="number" value={formData.land_area_m2?.toString() || ''} onChange={(e) => updateField('land_area_m2', e.target.value ? parseFloat(e.target.value) : null)} />
-          <InputField id="built_area_m2" label="Área Construída (m²)" type="number" value={formData.built_area_m2?.toString() || ''} onChange={(e) => updateField('built_area_m2', e.target.value ? parseFloat(e.target.value) : null)} />
-          <InputField id="construction_age_years" label="Idade da Construção (anos)" type="number" value={formData.construction_age_years?.toString() || ''} onChange={(e) => updateField('construction_age_years', e.target.value ? parseFloat(e.target.value) : null)} />
+          <InputField id="land_area_m2" label="Área do Terreno (m²)" type="number" value={formData.land_area_m2?.toString() || ''} onChange={(e) => updateField('land_area_m2', e.target.value ? parseFloat(e.target.value) : null)} required/>
+          <InputField id="built_area_m2" label="Área Construída (m²)" type="number" value={formData.built_area_m2?.toString() || ''} onChange={(e) => updateField('built_area_m2', e.target.value ? parseFloat(e.target.value) : null)} required/>
+          <InputField id="construction_age_years" label="Idade da Construção (anos)" type="number" value={formData.construction_age_years?.toString() || ''} onChange={(e) => updateField('construction_age_years', e.target.value ? parseFloat(e.target.value) : null)} required/>
         </div>
         <TextareaField id="condition_description" label="Descrição do Estado de Conservação" value={formData.condition_description} onChange={(e) => updateField('condition_description', e.target.value)} required />
       </FormSection>
@@ -178,6 +192,7 @@ const PropertyForm: React.FC = () => {
           options={DOCUMENT_OPTIONS}
           selectedValues={formData.documents}
           onChange={(newSelection) => updateField('documents', newSelection)}
+          required
         />
         <SelectField
           id="document_status"
@@ -187,7 +202,7 @@ const PropertyForm: React.FC = () => {
           options={DOCUMENT_STATUS_OPTIONS}
           required
         />
-        <SelectField id="objective" label="Objetivo da Avaliação" value={formData.objective} onChange={(e) => updateField('objective', e.target.value)} options={OBJECTIVE_OPTIONS} />
+        <SelectField id="objective" label="Objetivo da Avaliação" value={formData.objective} onChange={(e) => updateField('objective', e.target.value)} options={OBJECTIVE_OPTIONS} required/>
       </FormSection>
 
       <FormSection title="Detalhes Adicionais" icon="fa-info-circle">
@@ -221,11 +236,11 @@ const PropertyForm: React.FC = () => {
             </label>
           </div>
         </div>
-        <TextareaField id="additional_details" label="Outros Detalhes Relevantes" value={formData.additional_details} onChange={(e) => updateField('additional_details', e.target.value)} />
+        <TextareaField id="additional_details" label="Outros Detalhes Relevantes" value={formData.additional_details} onChange={(e) => updateField('additional_details', e.target.value)} required/>
       </FormSection>
 
       <FormSection title="Fotos do Imóvel" icon="fa-camera">
-        <PhotoURLManager />
+        <PhotoURLManager required />
       </FormSection>
 
       <div className="pt-6 border-t border-slate-700">
