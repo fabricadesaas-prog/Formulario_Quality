@@ -1,3 +1,4 @@
+
 import { createClient } from '@supabase/supabase-js';
 import { PropertyData, Objective, Occupancy, PropertyType, RequesterRole } from '../types';
 
@@ -29,8 +30,14 @@ type PropertyEvaluationInsert = {
   objective: Objective;
   photos: string[];
   occupancy: Occupancy;
-  condominium: string;
+  condominium: string | null;
   additional_details: string;
+};
+
+// This represents the shape of a row from the database, including auto-generated columns
+type PropertyEvaluationRow = PropertyEvaluationInsert & {
+  id: number;
+  created_at: string;
 };
 
 // Define the database schema for Supabase client
@@ -38,7 +45,7 @@ export type Database = {
   public: {
     Tables: {
       property_evaluations: {
-        Row: PropertyEvaluationInsert;
+        Row: PropertyEvaluationRow; // Use the more specific Row type
         Insert: PropertyEvaluationInsert;
         Update: Partial<PropertyEvaluationInsert>;
       };

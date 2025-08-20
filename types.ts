@@ -1,4 +1,3 @@
-
 export enum RequesterRole {
   PROPRIETARIO = 'proprietario',
   CORRETOR_CNAI = 'corretor_cnai',
@@ -9,9 +8,6 @@ export enum RequesterRole {
 export enum PropertyType {
   URBANO = 'urbano',
   RURAL = 'rural',
-  COMERCIAL = 'comercial',
-  TERRENO = 'terreno',
-  MISTO = 'misto',
 }
 
 export enum Objective {
@@ -49,6 +45,6 @@ export interface PropertyData {
   photos: string[];
   document_files: string[];
   occupancy: Occupancy;
-  condominium: string;
+  condominium: string | null;
   additional_details: string;
 }

@@ -10,9 +10,6 @@ export const REQUESTER_ROLE_OPTIONS = [
 export const PROPERTY_TYPE_OPTIONS = [
   { value: PropertyType.URBANO, label: 'Urbano' },
   { value: PropertyType.RURAL, label: 'Rural' },
-  { value: PropertyType.COMERCIAL, label: 'Comercial' },
-  { value: PropertyType.TERRENO, label: 'Terreno' },
-  { value: PropertyType.MISTO, label: 'Misto' },
 ];
 
 export const OBJECTIVE_OPTIONS = [

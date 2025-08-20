@@ -20,10 +20,22 @@ const PropertyForm: React.FC = () => {
   const [isConstructionAgeNA, setIsConstructionAgeNA] = useState(false);
   const [isCondoNA, setIsCondoNA] = useState(false);
 
-  const handleNAChange = (setter: React.Dispatch<React.SetStateAction<boolean>>, field: keyof typeof formData, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNAChange = (setter: React.Dispatch<React.SetStateAction<boolean>>, field: 'land_area_m2' | 'built_area_m2' | 'construction_age_years' | 'condominium', e: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = e.target.checked;
     setter(isChecked);
-    updateField(field, isChecked ? null : '');
+    
+    if (isChecked) {
+      updateField(field, null);
+      return;
+    }
+
+    // When unchecked, reset to a default "empty" state.
+    if (field === 'condominium') {
+      updateField(field, '');
+    } else {
+      // For number fields, reset to null, which the input will show as empty.
+      updateField(field, null);
+    }
   };
 
   const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -212,7 +224,7 @@ const PropertyForm: React.FC = () => {
       <FormSection title="Detalhes do Imóvel" icon="fa-ruler-combined">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <SelectField id="property_type" label="Tipo de Imóvel" value={formData.property_type} onChange={(e) => updateField('property_type', e.target.value)} options={PROPERTY_TYPE_OPTIONS} required/>
-            <div>
+            <div className="flex flex-col-reverse">
                 <InputField 
                     id="construction_age_years" 
                     label="Idade da Construção (anos)" 
@@ -223,7 +235,7 @@ const PropertyForm: React.FC = () => {
                     required={!isConstructionAgeNA}
                     disabled={isConstructionAgeNA}
                 />
-                <div className="flex items-center mt-1">
+                <div className="flex items-center mb-2">
                     <input 
                         id="construction_age_na" 
                         type="checkbox" 
@@ -236,20 +248,20 @@ const PropertyForm: React.FC = () => {
             </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+            <div className="flex flex-col-reverse">
                 <InputField id="land_area_m2" label="Área do Terreno (m²)" type="number" value={formData.land_area_m2?.toString() || ''} onChange={(e) => updateField('land_area_m2', e.target.value ? parseFloat(e.target.value) : null)} required={!isLandAreaNA} disabled={isLandAreaNA} />
-                <div className="flex items-center mt-1"><input id="land_area_na" type="checkbox" checked={isLandAreaNA} onChange={(e) => handleNAChange(setIsLandAreaNA, 'land_area_m2', e)} className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500" /><label htmlFor="land_area_na" className="ml-2 text-sm font-medium text-blue-900/90">Não se aplica</label></div>
+                <div className="flex items-center mb-2"><input id="land_area_na" type="checkbox" checked={isLandAreaNA} onChange={(e) => handleNAChange(setIsLandAreaNA, 'land_area_m2', e)} className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500" /><label htmlFor="land_area_na" className="ml-2 text-sm font-medium text-blue-900/90">Não se aplica</label></div>
             </div>
-            <div>
+            <div className="flex flex-col-reverse">
                 <InputField id="built_area_m2" label="Área Construída (m²)" type="number" value={formData.built_area_m2?.toString() || ''} onChange={(e) => updateField('built_area_m2', e.target.value ? parseFloat(e.target.value) : null)} required={!isBuiltAreaNA} disabled={isBuiltAreaNA} />
-                <div className="flex items-center mt-1"><input id="built_area_na" type="checkbox" checked={isBuiltAreaNA} onChange={(e) => handleNAChange(setIsBuiltAreaNA, 'built_area_m2', e)} className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500" /><label htmlFor="built_area_na" className="ml-2 text-sm font-medium text-blue-900/90">Não se aplica</label></div>
+                <div className="flex items-center mb-2"><input id="built_area_na" type="checkbox" checked={isBuiltAreaNA} onChange={(e) => handleNAChange(setIsBuiltAreaNA, 'built_area_m2', e)} className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500" /><label htmlFor="built_area_na" className="ml-2 text-sm font-medium text-blue-900/90">Não se aplica</label></div>
             </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <SelectField id="occupancy" label="Ocupação" value={formData.occupancy} onChange={(e) => updateField('occupancy', e.target.value)} options={OCCUPANCY_OPTIONS} required />
-            <div>
-                <InputField id="condominium" label="Nome do Condomínio" value={isCondoNA ? '' : formData.condominium} onChange={(e) => updateField('condominium', e.target.value)} required={!isCondoNA} disabled={isCondoNA} />
-                <div className="flex items-center mt-1"><input id="condo_na" type="checkbox" checked={isCondoNA} onChange={(e) => handleNAChange(setIsCondoNA, 'condominium', e)} className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500" /><label htmlFor="condo_na" className="ml-2 text-sm font-medium text-blue-900/90">Não se aplica</label></div>
+            <div className="flex flex-col-reverse">
+                <InputField id="condominium" label="Nome do Condomínio" value={isCondoNA ? '' : formData.condominium ?? ''} onChange={(e) => updateField('condominium', e.target.value)} required={!isCondoNA} disabled={isCondoNA} />
+                <div className="flex items-center mb-2"><input id="condo_na" type="checkbox" checked={isCondoNA} onChange={(e) => handleNAChange(setIsCondoNA, 'condominium', e)} className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500" /><label htmlFor="condo_na" className="ml-2 text-sm font-medium text-blue-900/90">Não se aplica</label></div>
             </div>
         </div>
         <TextareaField id="condition_description" label="Estado Geral do Imóvel" value={formData.condition_description} onChange={(e) => updateField('condition_description', e.target.value)} placeholder="Descrição das condições gerais, como pintura, estrutura, acabamentos, etc." required />
