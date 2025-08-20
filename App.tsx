@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { PropertyFormProvider } from './contexts/PropertyFormContext';
 import PropertyForm from './components/PropertyForm';
@@ -5,13 +6,14 @@ import PropertyForm from './components/PropertyForm';
 const Logo: React.FC = () => (
   <div className="flex flex-col items-center justify-center">
     <div className="flex items-center gap-4">
-      
-
       {/* Log */}
-      <img alt="Quality Home Avalia Logo" class="mx-auto h-24" 
-      src="https://raw.githubusercontent.com/riquelima/avaliao-imvel-quality-home/refs/heads/main/logoTransparente2.png">
+      <img 
+        alt="Quality Home Avalia Logo" 
+        className="mx-auto h-24" 
+        src="https://raw.githubusercontent.com/riquelima/avaliao-imvel-quality-home/refs/heads/main/logoTransparente2.png" 
+      />
     </div>
-   <p class="mt-4 text-slate-600 text-lg">Formulário de Solicitação de Avaliação de Imóvel</p>
+   <p className="mt-4 text-slate-600 text-lg">Formulário de Solicitação de Avaliação de Imóvel</p>
   </div>
 );
 
