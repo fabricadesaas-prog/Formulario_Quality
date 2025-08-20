@@ -1,5 +1,5 @@
 {
-  "name": "Quality Home Avalia - Gerador de Parecer Técnico",
+  "name": "Quality Home Avalia -Formulario Gerador de Parecer Técnico",
   "description": "Um aplicativo para coletar dados de imóveis e gerar um parecer técnico de avaliação utilizando a API Gemini. Facilita o trabalho de corretores, advogados e proprietários.",
   "requestFramePermissions": []
 }

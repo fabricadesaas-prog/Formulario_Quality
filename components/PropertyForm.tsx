@@ -12,10 +12,12 @@ import { REQUESTER_ROLE_OPTIONS, PROPERTY_TYPE_OPTIONS, OBJECTIVE_OPTIONS, OCCUP
 const PropertyForm: React.FC = () => {
   const { formData, updateField, updateAddressField, resetForm } = usePropertyForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFetchingCep, setIsFetchingCep] = useState(false);
   
   // State for "Not Applicable" checkboxes
   const [isLandAreaNA, setIsLandAreaNA] = useState(false);
   const [isBuiltAreaNA, setIsBuiltAreaNA] = useState(false);
+  const [isConstructionAgeNA, setIsConstructionAgeNA] = useState(false);
   const [isCondoNA, setIsCondoNA] = useState(false);
 
   const handleNAChange = (setter: React.Dispatch<React.SetStateAction<boolean>>, field: keyof typeof formData, e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,12 +34,50 @@ const PropertyForm: React.FC = () => {
     updateField('whatsapp', value);
   };
 
+  const fetchAddressByCep = async (cep: string) => {
+    const cleanedCep = cep.replace(/\D/g, '');
+    if (cleanedCep.length !== 8) return;
+
+    setIsFetchingCep(true);
+    try {
+        const response = await fetch(`https://viacep.com.br/ws/${cleanedCep}/json/`);
+        if (!response.ok) throw new Error('Falha ao buscar CEP.');
+        
+        const data = await response.json();
+
+        if (data.erro) {
+            alert('CEP não encontrado. Por favor, verifique o número digitado.');
+            updateAddressField('street', '');
+            updateAddressField('neighborhood', '');
+            updateAddressField('city', '');
+            updateAddressField('state', '');
+        } else {
+            updateAddressField('street', data.logradouro || '');
+            updateAddressField('neighborhood', data.bairro || '');
+            updateAddressField('city', data.localidade || '');
+            updateAddressField('state', data.uf || '');
+            document.getElementById('number')?.focus();
+        }
+    } catch (error) {
+        console.error('CEP Fetch Error:', error);
+        alert('Não foi possível buscar o endereço para este CEP. Por favor, preencha manualmente.');
+    } finally {
+        setIsFetchingCep(false);
+    }
+  };
+
   const handleCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, '');
     if (value.length > 8) value = value.substring(0, 8);
-    if (value.length > 5) value = value.replace(/^(\d{5})(\d)/, '$1-$2');
-    updateAddressField('zip', value);
+    
+    const formattedValue = value.length > 5 ? value.replace(/^(\d{5})(\d)/, '$1-$2') : value;
+    updateAddressField('zip', formattedValue);
+
+    if (value.length === 8) {
+        fetchAddressByCep(value);
+    }
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,24 +149,91 @@ const PropertyForm: React.FC = () => {
       </FormSection>
 
       <FormSection title="Endereço do Imóvel" icon="fa-map-marker-alt">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <InputField
+              id="zip"
+              label="CEP"
+              value={formData.address.zip}
+              onChange={handleCepChange}
+              maxLength={9}
+              required
+              isLoading={isFetchingCep}
+            />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2">
-                <InputField id="street" label="Logradouro (Rua, Av.)" value={formData.address.street} onChange={(e) => updateAddressField('street', e.target.value)} required />
+              <InputField
+                id="street"
+                label="Logradouro (Rua, Av.)"
+                value={formData.address.street}
+                onChange={(e) => updateAddressField('street', e.target.value)}
+                required
+                isLoading={isFetchingCep}
+              />
             </div>
-            <InputField id="number" label="Número" value={formData.address.number} onChange={(e) => updateAddressField('number', e.target.value)} required />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <InputField id="neighborhood" label="Bairro" value={formData.address.neighborhood} onChange={(e) => updateAddressField('neighborhood', e.target.value)} required />
-            <InputField id="city" label="Cidade" value={formData.address.city} onChange={(e) => updateAddressField('city', e.target.value)} required />
-            <SelectField id="state" label="UF" value={formData.address.state} onChange={(e) => updateAddressField('state', e.target.value)} options={BRAZILIAN_STATES} required />
-            <InputField id="zip" label="CEP" value={formData.address.zip} onChange={handleCepChange} maxLength={9} required />
+            <InputField
+              id="number"
+              label="Número"
+              value={formData.address.number}
+              onChange={(e) => updateAddressField('number', e.target.value)}
+              required
+            />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <InputField
+              id="neighborhood"
+              label="Bairro"
+              value={formData.address.neighborhood}
+              onChange={(e) => updateAddressField('neighborhood', e.target.value)}
+              required
+              isLoading={isFetchingCep}
+            />
+            <InputField
+              id="city"
+              label="Cidade"
+              value={formData.address.city}
+              onChange={(e) => updateAddressField('city', e.target.value)}
+              required
+              isLoading={isFetchingCep}
+            />
+            <SelectField
+              id="state"
+              label="UF"
+              value={formData.address.state}
+              onChange={(e) => updateAddressField('state', e.target.value)}
+              options={BRAZILIAN_STATES}
+              required
+            />
+          </div>
         </div>
       </FormSection>
 
       <FormSection title="Detalhes do Imóvel" icon="fa-ruler-combined">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <SelectField id="property_type" label="Tipo de Imóvel" value={formData.property_type} onChange={(e) => updateField('property_type', e.target.value)} options={PROPERTY_TYPE_OPTIONS} required/>
-            <InputField id="construction_age_years" label="Idade da Construção (anos)" placeholder="Aproximada" type="number" value={formData.construction_age_years?.toString() || ''} onChange={(e) => updateField('construction_age_years', e.target.value ? parseFloat(e.target.value) : null)} required/>
+            <div>
+                <InputField 
+                    id="construction_age_years" 
+                    label="Idade da Construção (anos)" 
+                    placeholder="Aproximada" 
+                    type="number" 
+                    value={formData.construction_age_years?.toString() || ''} 
+                    onChange={(e) => updateField('construction_age_years', e.target.value ? parseFloat(e.target.value) : null)} 
+                    required={!isConstructionAgeNA}
+                    disabled={isConstructionAgeNA}
+                />
+                <div className="flex items-center mt-1">
+                    <input 
+                        id="construction_age_na" 
+                        type="checkbox" 
+                        checked={isConstructionAgeNA} 
+                        onChange={(e) => handleNAChange(setIsConstructionAgeNA, 'construction_age_years', e)} 
+                        className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500" 
+                    />
+                    <label htmlFor="construction_age_na" className="ml-2 text-sm font-medium text-blue-900/90">Não se aplica</label>
+                </div>
+            </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
