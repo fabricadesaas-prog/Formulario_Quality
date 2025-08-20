@@ -47,6 +47,7 @@ export interface PropertyData {
   document_status: string;
   objective: Objective;
   photos: string[];
+  document_files: string[];
   occupancy: Occupancy;
   condominium: string;
   additional_details: string;

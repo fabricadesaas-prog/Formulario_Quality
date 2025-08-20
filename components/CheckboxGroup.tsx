@@ -18,7 +18,7 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ label, options, selectedV
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-300 mb-2">
+      <label className="block text-sm font-medium text-blue-900/90 mb-2">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>
@@ -31,9 +31,9 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ label, options, selectedV
               value={option.value}
               checked={selectedValues.includes(option.value)}
               onChange={() => handleChange(option.value)}
-              className="h-4 w-4 text-cyan-500 bg-slate-700 border-slate-600 rounded focus:ring-cyan-500"
+              className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
             />
-            <label htmlFor={option.id} className="ml-2 block text-sm text-gray-300">
+            <label htmlFor={option.id} className="ml-2 block text-sm font-medium text-blue-900/90">
               {option.label}
             </label>
           </div>

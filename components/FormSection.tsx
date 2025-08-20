@@ -8,15 +8,14 @@ interface FormSectionProps {
 
 const FormSection: React.FC<FormSectionProps> = ({ title, icon, children }) => {
   return (
-    <fieldset className="space-y-4 border-t border-slate-700 pt-5">
-      <legend className="text-xl font-semibold text-gray-200 mb-4">
-        <i className={`fas ${icon} text-cyan-400 mr-3`}></i>
-        {title}
-      </legend>
-      <div className="space-y-4">
-        {children}
+    <section>
+      <div className="flex items-center">
+        <i className={`fas ${icon} text-orange-500 text-lg w-5 text-center mr-3`}></i>
+        <h2 className="text-xl font-semibold text-blue-900 tracking-wide">{title}</h2>
       </div>
-    </fieldset>
+      <hr className="mt-2 mb-6 border-t border-orange-200" />
+      {children}
+    </section>
   );
 };
 

@@ -28,11 +28,10 @@ export const OCCUPANCY_OPTIONS = [
 ];
 
 export const DOCUMENT_OPTIONS = [
-  { id: 'matricula', value: 'Matrícula do Imóvel', label: 'Matrícula do Imóvel' },
-  { id: 'iptu', value: 'Carnê de IPTU', label: 'Carnê de IPTU' },
-  { id: 'cnd', value: 'Certidão Negativa de Débitos', label: 'Certidão Negativa de Débitos' },
-  { id: 'habitese', value: 'Habite-se', label: 'Habite-se' },
-  { id: 'planta', value: 'Planta do Imóvel', label: 'Planta do Imóvel' },
+  { id: 'matricula', value: 'Matrícula', label: 'Matrícula' },
+  { id: 'iptu', value: 'IPTU', label: 'IPTU' },
+  { id: 'planta', value: 'Planta', label: 'Planta' },
+  { id: 'nenhum', value: 'Nenhum', label: 'Nenhum' },
 ];
 
 export const DOCUMENT_STATUS_OPTIONS = [
@@ -68,7 +67,7 @@ export const BRAZILIAN_STATES = [
   { value: 'RJ', label: 'Rio de Janeiro' },
   { value: 'RN', label: 'Rio Grande do Norte' },
   { value: 'RS', label: 'Rio Grande do Sul' },
-  { value: 'RO', label: 'Rondônia' },
+  { value: 'RO', 'label': 'Rondônia' },
   { value: 'RR', label: 'Roraima' },
   { value: 'SC', label: 'Santa Catarina' },
   { value: 'SP', label: 'São Paulo' },

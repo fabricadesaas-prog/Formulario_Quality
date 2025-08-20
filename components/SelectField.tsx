@@ -9,14 +9,14 @@ interface SelectFieldProps extends React.SelectHTMLAttributes<HTMLSelectElement>
 const SelectField: React.FC<SelectFieldProps> = ({ label, id, options, ...props }) => {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-1">
+      <label htmlFor={id} className="block text-sm font-medium text-blue-900/90 mb-2">
         {label}
         {props.required && <span className="text-red-500 ml-1">*</span>}
       </label>
       <select
         id={id}
         {...props}
-        className="w-full px-3 py-2 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition duration-150 ease-in-out bg-[#0D182A] text-gray-200"
+        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-150 ease-in-out bg-white text-gray-900"
       >
         <option value="" disabled>Selecione...</option>
         {options.map((option) => (
