@@ -2,9 +2,6 @@ import { RequesterRole, PropertyType, Objective, Occupancy } from './types';
 
 export const REQUESTER_ROLE_OPTIONS = [
   { value: RequesterRole.PROPRIETARIO, label: 'Proprietário' },
-  { value: RequesterRole.CORRETOR_CNAI, label: 'Corretor (com CNAI)' },
-  { value: RequesterRole.CORRETOR_SEM_CNAI, label: 'Corretor (sem CNAI)' },
-  { value: RequesterRole.ADVOGADO, label: 'Advogado' },
 ];
 
 export const PROPERTY_TYPE_OPTIONS = [

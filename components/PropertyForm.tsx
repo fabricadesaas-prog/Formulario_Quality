@@ -7,7 +7,7 @@ import SelectField from './SelectField';
 import TextareaField from './TextareaField';
 import CheckboxGroup from './CheckboxGroup';
 import PhotoURLManager from './PhotoURLManager';
-import { REQUESTER_ROLE_OPTIONS, PROPERTY_TYPE_OPTIONS, OBJECTIVE_OPTIONS, OCCUPANCY_OPTIONS, DOCUMENT_OPTIONS, BRAZILIAN_STATES, DOCUMENT_STATUS_OPTIONS } from '../constants';
+import { PROPERTY_TYPE_OPTIONS, OBJECTIVE_OPTIONS, OCCUPANCY_OPTIONS, DOCUMENT_OPTIONS, BRAZILIAN_STATES, DOCUMENT_STATUS_OPTIONS } from '../constants';
 
 const PropertyForm: React.FC = () => {
   const { formData, updateField, updateAddressField, resetForm } = usePropertyForm();
@@ -150,13 +150,11 @@ const PropertyForm: React.FC = () => {
             required
           />
         </div>
-        <SelectField
+        <InputField
             id="requester_role"
             label="Tipo de Cliente"
-            value={formData.requester_role}
-            onChange={(e) => updateField('requester_role', e.target.value)}
-            options={REQUESTER_ROLE_OPTIONS}
-            required
+            value="Proprietário"
+            disabled
         />
       </FormSection>
 

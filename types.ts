@@ -1,8 +1,5 @@
 export enum RequesterRole {
   PROPRIETARIO = 'proprietario',
-  CORRETOR_CNAI = 'corretor_cnai',
-  CORRETOR_SEM_CNAI = 'corretor_sem_cnai',
-  ADVOGADO = 'advogado',
 }
 
 export enum PropertyType {
